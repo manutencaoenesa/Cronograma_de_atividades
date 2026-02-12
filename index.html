@@ -2,135 +2,490 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gestão Premium | Oficina</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
     <style>
-        /* Cole aqui o CSS luxuoso que te mandei antes */
-        :root { --bg-gradient: linear-gradient(135deg, #0f1115 0%, #1a1d26 100%); --gold: #d4af37; --text-main: #ffffff; --glass-bg: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.08); }
-        body { margin: 0; font-family: 'Outfit', sans-serif; background: var(--bg-gradient); color: var(--text-main); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { width: 100%; max-width: 500px; padding: 20px; }
-        .card { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px; }
-        .header h1 { font-family: 'Playfair Display', serif; text-align: center; color: var(--gold); }
-        label { color: var(--gold); display: block; margin: 10px 0 5px; font-size: 0.8rem; }
-        input, select, textarea { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; }
-        .btn-submit { width: 100%; background: var(--gold); border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; padding: 10px 20px; border-radius: 20px; display: none; }
+        :root {
+            --bg-dark: #0f1115;
+            --bg-card: rgba(30, 34, 45, 0.6);
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f1115 0%, #1a1d26 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 80px; /* Espaço para o botão flutuante */
+        }
+
+        /* Título Principal */
+        .app-header {
+            padding: 30px 20px;
+            text-align: center;
+            background: rgba(15, 17, 21, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 10;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .app-header h1 {
+            font-family: 'Playfair Display', serif;
+            margin: 0; font-size: 1.5rem;
+            background: linear-gradient(45deg, #fff, #aaa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .app-header p { margin: 5px 0 0; color: var(--gold); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s, opacity 0.3s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .card:active { transform: scale(0.98); }
+        
+        .card::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+            background: var(--gold);
+        }
+
+        .card.status-concluido {
+            opacity: 0.5;
+            border-color: transparent;
+        }
+        .card.status-concluido::before { background: var(--success); }
+        .card.status-andamento::before { background: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .card-title { font-weight: 500; font-size: 1.1rem; line-height: 1.4; flex: 1; padding-right: 10px; }
+        .status-badge {
+            font-size: 0.65rem; padding: 4px 8px; border-radius: 12px;
+            text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold;
+        }
+        .badge-gold { background: rgba(212, 175, 55, 0.15); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .badge-green { background: rgba(46, 204, 113, 0.15); color: var(--success); border: 1px solid rgba(46, 204, 113, 0.3); }
+
+        .card-details { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; }
+        .detail-item i { width: 15px; color: var(--gold); margin-right: 5px; }
+        .equipe-list { grid-column: 1 / -1; margin-top: 5px; border-top: 1px solid var(--glass-border); padding-top: 10px; }
+
+        /* Loading Inicial */
+        .loader-container { text-align: center; padding: 50px; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* FAB (Botão Flutuante) */
+        .fab {
+            position: fixed; bottom: 25px; right: 25px;
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, var(--gold), #b89628);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: #1a1d26; font-size: 1.5rem;
+            cursor: pointer; z-index: 100;
+            transition: transform 0.3s;
+        }
+        .fab:hover { transform: scale(1.1) rotate(90deg); }
+
+        /* MODAL (Formulário) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 1000; display: none;
+            justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: #1a1d26; width: 90%; max-width: 500px;
+            max-height: 90vh; overflow-y: auto;
+            border-radius: 20px; border: 1px solid var(--glass-border);
+            padding: 25px; position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            transform: translateY(20px); transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .close-modal { position: absolute; top: 15px; right: 15px; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 10px; }
+
+        /* Estilos do Form */
+        label { display: block; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; margin: 15px 0 5px; letter-spacing: 1px; }
+        input, select, textarea {
+            width: 100%; background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border); border-radius: 10px;
+            padding: 12px; color: white; font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+        }
+        input:focus, textarea:focus { border-color: var(--gold); background: rgba(0,0,0,0.5); }
+        
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; }
+
+        .btn-save {
+            width: 100%; margin-top: 25px; padding: 15px;
+            background: var(--gold); border: none; border-radius: 12px;
+            color: #0f1115; font-weight: 600; font-size: 1rem;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-save:disabled { background: #555; color: #888; cursor: not-allowed; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1a1d26; border: 1px solid var(--glass-border); padding: 12px 24px;
+            border-radius: 30px; font-size: 0.9rem; z-index: 2000; transition: 0.4s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card">
-        <div class="header">
-            <h1>Cronograma de Oficina</h1>
-            <p style="text-align:center; color:#8b9bb4">Registro de atividades diárias</p>
+    <header class="app-header">
+        <h1>Ordem de Serviço</h1>
+        <p>Painel de Controle</p>
+    </header>
+
+    <div class="container">
+        <div id="mainLoader" class="loader-container">
+            <div class="spinner"></div>
+            <p style="color: var(--text-muted)">Sincronizando dados...</p>
         </div>
 
-        <form id="formAtividade">
-            <label>Descrição da Atividade</label>
-            <textarea id="descricao" required placeholder="Ex: Manutenção predial/hidráulica..."></textarea>
-
-            <div style="display:flex; gap:10px">
-                <div style="flex:1">
-                    <label>Início</label>
-                    <input type="time" id="horaInicio" required>
-                </div>
-                <div style="flex:1">
-                    <label>Fim</label>
-                    <input type="time" id="horaFim" required>
-                </div>
-            </div>
-
-            <label>Quantidade de Pessoas</label>
-            <select id="qtdPessoas" onchange="gerarCamposNomes()">
-                <option value="0">Selecione...</option>
-                <option value="1">1 Pessoa</option>
-                <option value="2">2 Pessoas</option>
-                <option value="3">3 Pessoas</option>
-            </select>
-
-            <div id="containerNomes"></div>
-
-            <button type="submit" class="btn-submit" id="btnEnviar">REGISTRAR ATIVIDADE</button>
-        </form>
+        <div id="cardsArea"></div>
     </div>
-</div>
 
-<div id="toast" class="toast"></div>
+    <div class="fab" onclick="abrirModalNova()">
+        <i class="fas fa-plus"></i>
+    </div>
+
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal" onclick="fecharModal()"></i>
+            <h2 id="modalTitle" style="margin-top:0; font-family: 'Playfair Display'; color:white;">Nova Atividade</h2>
+            
+            <form id="formAtividade">
+                <input type="hidden" id="editId"> <label>Descrição do Serviço</label>
+                <textarea id="descricao" rows="3" placeholder="O que foi feito?" required></textarea>
+
+                <label>Status</label>
+                <select id="status" onchange="toggleFimFields()" style="background: rgba(212,175,55,0.1); border-color: var(--gold);">
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluído">Concluído</option>
+                </select>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Data Início</label>
+                        <input type="date" id="dataInicio" required>
+                    </div>
+                    <div class="col">
+                        <label>Hora Início</label>
+                        <input type="time" id="horaInicio" required>
+                    </div>
+                </div>
+
+                <div id="fimFields" style="opacity: 0.5; pointer-events: none; transition: 0.3s;">
+                    <div class="row">
+                        <div class="col">
+                            <label>Data Término</label>
+                            <input type="date" id="dataTermino">
+                        </div>
+                        <div class="col">
+                            <label>Hora Término</label>
+                            <input type="time" id="horaTermino">
+                        </div>
+                    </div>
+                </div>
+
+                <label>Quantos Colaboradores?</label>
+                <select id="qtdPessoas" onchange="gerarCamposNomes()">
+                    <option value="0">Selecione...</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+
+                <div id="listaNomes" style="margin-top: 10px;"></div>
+
+                <button type="submit" class="btn-save" id="btnSalvar">
+                    <span id="btnText">Salvar Registro</span>
+                    <div id="btnSpinner" class="spinner" style="width:20px; height:20px; display:none; margin:0;"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle" style="color: var(--success)"></i>
+        <span id="toastMsg">Salvo com sucesso</span>
+    </div>
 
 <script>
-    // COLORA AQUI A URL QUE VOCÊ COPIOU DO GOOGLE APPS SCRIPT
-    const WEB_APP_URL = "SUA_URL_AQUI_DO_GOOGLE_SCRIPT";
+    // 👇👇👇 SUBTITUA PELA SUA URL DO GOOGLE SCRIPT 👇👇👇
+    const API_URL = "https://script.google.com/macros/s/AKfycbzAQkeSMmAY8Cylbbv69VLY5M58ttTao_F3sWzL4VsUnNrO9HMXbJZsoTrwP4MdxyWm/exec"; 
+    // 👆👆👆
 
-    let listaNomes = [];
+    let colaboradoresGlobal = [];
+    let atividadesGlobal = [];
 
-    // Busca nomes ao carregar
-    async function carregarNomes() {
+    // INICIALIZAÇÃO
+    window.onload = carregarDados;
+
+    async function carregarDados() {
+        document.getElementById('mainLoader').style.display = 'block';
+        document.getElementById('cardsArea').innerHTML = '';
+        
         try {
-            const response = await fetch(WEB_APP_URL);
-            listaNomes = await response.json();
-        } catch (e) {
-            console.error("Erro ao carregar nomes", e);
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            colaboradoresGlobal = data.colaboradores;
+            atividadesGlobal = data.atividades;
+            
+            renderizarCards();
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao carregar dados. Verifique a conexão.");
+        } finally {
+            document.getElementById('mainLoader').style.display = 'none';
         }
     }
-    carregarNomes();
 
-    function gerarCamposNomes() {
-        const qtd = document.getElementById('qtdPessoas').value;
-        const container = document.getElementById('containerNomes');
+    function renderizarCards() {
+        const area = document.getElementById('cardsArea');
+        area.innerHTML = '';
+
+        // Ordenação já vem do backend (mais recente primeiro), mas vamos mover concluidos p/ baixo
+        // Separar em dois grupos
+        const emAndamento = atividadesGlobal.filter(a => a.status !== 'Concluído');
+        const concluidos = atividadesGlobal.filter(a => a.status === 'Concluído');
+        
+        const listaFinal = [...emAndamento, ...concluidos];
+
+        listaFinal.forEach(item => {
+            const isConcluido = item.status === 'Concluído';
+            const statusClass = isConcluido ? 'status-concluido' : 'status-andamento';
+            const badgeClass = isConcluido ? 'badge-green' : 'badge-gold';
+            
+            const card = document.createElement('div');
+            card.className = `card ${statusClass}`;
+            card.onclick = () => abrirModalEdicao(item);
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-title">${item.descricao}</div>
+                    <span class="status-badge ${badgeClass}">${item.status}</span>
+                </div>
+                <div class="card-details">
+                    <div class="detail-item">
+                        <i class="far fa-calendar-alt"></i> ${formatarData(item.dataInicio)}
+                    </div>
+                    <div class="detail-item">
+                        <i class="far fa-clock"></i> ${item.horaInicio}
+                    </div>
+                    ${isConcluido ? `
+                    <div class="detail-item" style="color: var(--success)">
+                        <i class="fas fa-check"></i> Fim: ${formatarData(item.dataTermino)}
+                    </div>
+                    <div class="detail-item" style="color: var(--success)">
+                        <i class="far fa-clock"></i> ${item.horaTermino}
+                    </div>` : ''}
+                    <div class="equipe-list">
+                        <i class="fas fa-users"></i> ${item.equipe}
+                    </div>
+                </div>
+            `;
+            area.appendChild(card);
+        });
+    }
+
+    // FORMULÁRIO E MODAL
+    function abrirModalNova() {
+        document.getElementById('formAtividade').reset();
+        document.getElementById('editId').value = ""; // Sem ID = Novo
+        document.getElementById('modalTitle').innerText = "Nova Atividade";
+        document.getElementById('listaNomes').innerHTML = "";
+        
+        // Data atual automática
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('dataInicio').value = hoje;
+        
+        // Hora atual automática
+        const agora = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+        document.getElementById('horaInicio').value = agora;
+
+        document.getElementById('status').value = "Em Andamento";
+        toggleFimFields();
+        
+        document.getElementById('modalForm').classList.add('active');
+    }
+
+    function abrirModalEdicao(item) {
+        document.getElementById('editId').value = item.id;
+        document.getElementById('modalTitle').innerText = "Editar Atividade";
+        document.getElementById('descricao').value = item.descricao;
+        document.getElementById('dataInicio').value = item.dataInicio;
+        document.getElementById('horaInicio').value = item.horaInicio;
+        document.getElementById('status').value = item.status;
+        
+        document.getElementById('dataTermino').value = item.dataTermino;
+        document.getElementById('horaTermino').value = item.horaTermino;
+
+        // Tenta preencher equipe
+        const nomes = item.equipe.split(', ');
+        const qtd = nomes.length;
+        const selectQtd = document.getElementById('qtdPessoas');
+        
+        // Se a quantidade for maior que 4, ajusta ou limita
+        selectQtd.value = qtd > 4 ? 4 : qtd; 
+        gerarCamposNomes(nomes); // Passa os nomes para preencher
+
+        toggleFimFields();
+        document.getElementById('modalForm').classList.add('active');
+    }
+
+    function fecharModal() {
+        document.getElementById('modalForm').classList.remove('active');
+    }
+
+    // LÓGICA DO SELECT DE NOMES
+    function gerarCamposNomes(nomesPreenchidos = []) {
+        const qtd = parseInt(document.getElementById('qtdPessoas').value);
+        const container = document.getElementById('listaNomes');
         container.innerHTML = '';
-        for(let i=0; i<qtd; i++) {
-            let select = document.createElement('select');
+
+        for (let i = 0; i < qtd; i++) {
+            const select = document.createElement('select');
             select.className = "nome-colaborador";
+            select.style.marginBottom = "10px";
             select.required = true;
-            select.innerHTML = `<option value="">Selecione o Colaborador ${i+1}</option>` + 
-                               listaNomes.map(n => `<option value="${n}">${n}</option>`).join('');
+            
+            let options = `<option value="">Colaborador ${i+1}</option>`;
+            colaboradoresGlobal.forEach(nome => {
+                const selected = (nomesPreenchidos[i] && nomesPreenchidos[i] === nome) ? 'selected' : '';
+                options += `<option value="${nome}" ${selected}>${nome}</option>`;
+            });
+            
+            select.innerHTML = options;
             container.appendChild(select);
         }
     }
 
+    function toggleFimFields() {
+        const status = document.getElementById('status').value;
+        const areaFim = document.getElementById('fimFields');
+        const dTermino = document.getElementById('dataTermino');
+        const hTermino = document.getElementById('horaTermino');
+
+        if (status === "Concluído") {
+            areaFim.style.opacity = "1";
+            areaFim.style.pointerEvents = "auto";
+            dTermino.required = true;
+            hTermino.required = true;
+            
+            // Se estiver vazio, sugere agora
+            if(!dTermino.value) dTermino.value = new Date().toISOString().split('T')[0];
+            if(!hTermino.value) hTermino.value = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+        } else {
+            areaFim.style.opacity = "0.5";
+            areaFim.style.pointerEvents = "none";
+            dTermino.required = false;
+            hTermino.required = false;
+        }
+    }
+
+    // ENVIAR DADOS
     document.getElementById('formAtividade').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btnEnviar');
-        btn.innerText = "ENVIANDO...";
-        btn.disabled = true;
-
-        const nomes = Array.from(document.querySelectorAll('.nome-colaborador')).map(s => s.value);
         
-        const dados = {
+        const btn = document.getElementById('btnSalvar');
+        const txt = document.getElementById('btnText');
+        const spin = document.getElementById('btnSpinner');
+        
+        btn.disabled = true;
+        txt.style.display = 'none';
+        spin.style.display = 'block';
+
+        // Coleta Nomes
+        const selects = document.querySelectorAll('.nome-colaborador');
+        const nomesArray = Array.from(selects).map(s => s.value).filter(v => v !== "");
+
+        const idEdicao = document.getElementById('editId').value;
+        
+        const payload = {
+            action: idEdicao ? "update" : "create",
+            id: idEdicao,
             descricao: document.getElementById('descricao').value,
+            dataInicio: document.getElementById('dataInicio').value,
             horaInicio: document.getElementById('horaInicio').value,
-            horaFim: document.getElementById('horaFim').value,
-            equipe: nomes.join(', ')
+            dataTermino: document.getElementById('dataTermino').value,
+            horaTermino: document.getElementById('horaTermino').value,
+            status: document.getElementById('status').value,
+            equipe: nomesArray.join(', ')
         };
 
         try {
-            // Envia para o Google via POST
-            await fetch(WEB_APP_URL, {
+            await fetch(API_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Necessário para evitar erro de redirecionamento do Google
-                cache: 'no-cache',
-                body: JSON.stringify(dados)
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
             });
 
-            showToast("Sucesso! Atividade registrada.");
-            document.getElementById('formAtividade').reset();
-            document.getElementById('containerNomes').innerHTML = '';
+            showToast();
+            fecharModal();
+            carregarDados(); // Recarrega a tela para ver as mudanças
+
         } catch (err) {
-            showToast("Erro ao enviar dados.");
+            alert("Erro ao salvar. Tente novamente.");
+            console.error(err);
         } finally {
-            btn.innerText = "REGISTRAR ATIVIDADE";
             btn.disabled = false;
+            txt.style.display = 'block';
+            spin.style.display = 'none';
         }
     });
 
-    function showToast(txt) {
+    function showToast() {
         const t = document.getElementById('toast');
-        t.innerText = txt;
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 3000);
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function formatarData(dataISO) {
+        if(!dataISO) return "";
+        const [ano, mes, dia] = dataISO.split('-');
+        return `${dia}/${mes}`;
     }
 </script>
+
 </body>
 </html>
