@@ -281,6 +281,7 @@
 
     function renderizarCards() {
         const area = document.getElementById('cardsArea');
+        
         area.innerHTML = '';
 
         // Ordenação já vem do backend (mais recente primeiro), mas vamos mover concluidos p/ baixo
@@ -309,7 +310,8 @@
                         <i class="far fa-calendar-alt"></i> ${formatarData(item.dataInicio)}
                     </div>
                     <div class="detail-item">
-                        <i class="far fa-clock"></i> ${item.horaInicio}
+                        const horaLimpaInício = item.horaInicio.toString().substring(0, 5);
+const horaLimpaFim = item.horaTermino ? item.horaTermino.toString().substring(0, 5) : "";
                     </div>
                     ${isConcluido ? `
                     <div class="detail-item" style="color: var(--success)">
