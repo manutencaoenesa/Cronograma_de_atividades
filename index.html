@@ -31,7 +31,7 @@
             background: linear-gradient(135deg, #0f1115 0%, #1a1d26 100%);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 80px; /* Espaço para o botão flutuante */
+            padding-bottom: 80px; 
         }
 
         /* Título Principal */
@@ -276,6 +276,8 @@
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
                 </select>
 
                 <div id="listaNomes" style="margin-top: 10px;"></div>
@@ -300,9 +302,8 @@
 
     let colaboradoresGlobal = [];
     let atividadesGlobal = [];
-    let descricoesUnicas = []; // Armazena sugestões de autocomplete
+    let descricoesUnicas = [];
 
-    // INICIALIZAÇÃO
     window.onload = carregarDados;
 
     async function carregarDados() {
@@ -316,7 +317,6 @@
             colaboradoresGlobal = data.colaboradores;
             atividadesGlobal = data.atividades;
             
-            // Extrair descrições únicas para o autocomplete
             const todasDescricoes = atividadesGlobal.map(a => a.descricao);
             descricoesUnicas = [...new Set(todasDescricoes)].filter(d => d && d.trim() !== "");
 
@@ -331,7 +331,6 @@
 
     function renderizarCards() {
         const area = document.getElementById('cardsArea');
-        
         area.innerHTML = '';
 
         const emAndamento = atividadesGlobal.filter(a => a.status !== 'Concluído');
@@ -366,6 +365,9 @@
                     </div>
                     <div class="detail-item" style="color: var(--success)">
                         <i class="far fa-clock"></i> ${item.horaTermino}
+                    </div>
+                    <div class="detail-item" style="color: var(--success); grid-column: 1 / -1; margin-top: 5px; font-weight: bold;">
+                        <i class="fas fa-stopwatch"></i> Duração Total: ${item.duracao || '00:00'}
                     </div>` : ''}
                     <div class="equipe-list">
                         <i class="fas fa-users"></i> ${item.equipe}
@@ -376,7 +378,6 @@
         });
     }
 
-    // FORMULÁRIO E MODAL
     function abrirModalNova() {
         document.getElementById('formAtividade').reset();
         document.getElementById('editId').value = ""; 
@@ -410,7 +411,8 @@
         const qtd = nomes.length;
         const selectQtd = document.getElementById('qtdPessoas');
         
-        selectQtd.value = qtd > 4 ? 4 : qtd; 
+        // Ajustado para suportar até 6 preenchimentos anteriores
+        selectQtd.value = qtd > 6 ? 6 : qtd; 
         gerarCamposNomes(nomes); 
 
         toggleFimFields();
@@ -419,10 +421,9 @@
 
     function fecharModal() {
         document.getElementById('modalForm').classList.remove('active');
-        document.getElementById('listaSugestoes').style.display = 'none'; // Esconde autocomplete ao fechar
+        document.getElementById('listaSugestoes').style.display = 'none';
     }
 
-    // LÓGICA DO SELECT DE NOMES
     function gerarCamposNomes(nomesPreenchidos = []) {
         const qtd = parseInt(document.getElementById('qtdPessoas').value);
         const container = document.getElementById('listaNomes');
@@ -468,7 +469,6 @@
         }
     }
 
-    // ENVIAR DADOS
     document.getElementById('formAtividade').addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -530,45 +530,27 @@
         return `${dia}/${mes}`;
     }
 
-    // ----------------------------------------------------
-    // LÓGICA DE AUTOCOMPLETE / SUGESTÕES
-    // ----------------------------------------------------
     const txtDescricao = document.getElementById('descricao');
     const boxSugestoes = document.getElementById('listaSugestoes');
 
-    // Ao digitar
-    txtDescricao.addEventListener('input', function() {
-        filtrarSugestoes(this.value);
-    });
+    txtDescricao.addEventListener('input', function() { filtrarSugestoes(this.value); });
+    txtDescricao.addEventListener('focus', function() { filtrarSugestoes(this.value); });
 
-    // Ao clicar ou focar no campo
-    txtDescricao.addEventListener('focus', function() {
-        filtrarSugestoes(this.value);
-    });
-
-    // Esconder se clicar fora
     document.addEventListener('click', function(e) {
-        // Se o clique não foi no campo E não foi na caixa de sugestões
         if (!txtDescricao.contains(e.target) && !boxSugestoes.contains(e.target)) {
             boxSugestoes.style.display = 'none';
         }
     });
 
     function filtrarSugestoes(textoDigitado) {
-        // Se não tiver descrições carregadas, sai
         if(descricoesUnicas.length === 0) return;
 
         const termo = textoDigitado ? textoDigitado.toLowerCase() : "";
-        
-        // Filtra
         const sugestoesFiltradas = descricoesUnicas.filter(desc => 
             desc.toLowerCase().includes(termo)
         );
 
-        // Se campo vazio, mostra as primeiras 15. Se tiver texto, mostra o resultado do filtro
-        // Limita a 15 resultados para não travar a tela se tiver muita coisa
         let listaParaExibir = termo === "" ? descricoesUnicas.slice(0, 15) : sugestoesFiltradas.slice(0, 15);
-
         renderizarListaSugestoes(listaParaExibir);
     }
 
@@ -585,10 +567,9 @@
             div.className = 'sugestao-item';
             div.innerText = texto;
             
-            // Ao clicar na sugestão
             div.onclick = () => {
-                txtDescricao.value = texto; // Preenche o campo
-                boxSugestoes.style.display = 'none'; // Some a lista
+                txtDescricao.value = texto; 
+                boxSugestoes.style.display = 'none'; 
             };
 
             boxSugestoes.appendChild(div);
