@@ -329,26 +329,6 @@
         }
     }
 
-    // NOVA FUNÇÃO para limpar o texto gigante que vem do Google Sheets
-    function formatarDuracao(duracaoStr) {
-        if (!duracaoStr) return '00:00';
-        
-        const texto = duracaoStr.toString().trim();
-        
-        // Se já for uma hora curta "08:15" ou "08:15:00"
-        if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(texto)) {
-            return texto;
-        }
-        
-        // Pega só o padrão de hora no meio da string (ex: "Sat Dec 30 1899 08:00:00 GMT...")
-        const match = texto.match(/\b(\d{2}:\d{2}(?::\d{2})?)\b/);
-        if (match) {
-            return match[1]; // Vai retornar "08:00:00"
-        }
-        
-        return texto;
-    }
-
     function renderizarCards() {
         const area = document.getElementById('cardsArea');
         area.innerHTML = '';
@@ -367,7 +347,6 @@
             card.className = `card ${statusClass}`;
             card.onclick = () => abrirModalEdicao(item);
 
-            // AQUI ESTÁ A CORREÇÃO: formatarDuracao(item.duracao)
             card.innerHTML = `
                 <div class="card-header">
                     <div class="card-title">${item.descricao}</div>
@@ -386,9 +365,6 @@
                     </div>
                     <div class="detail-item" style="color: var(--success)">
                         <i class="far fa-clock"></i> ${item.horaTermino}
-                    </div>
-                    <div class="detail-item" style="color: var(--success); grid-column: 1 / -1; margin-top: 5px; font-weight: bold;">
-                        <i class="fas fa-stopwatch"></i> Duração Total: ${formatarDuracao(item.duracao)}
                     </div>` : ''}
                     <div class="equipe-list">
                         <i class="fas fa-users"></i> ${item.equipe}
