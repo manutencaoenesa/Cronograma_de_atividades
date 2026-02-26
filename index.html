@@ -329,24 +329,32 @@
         }
     }
 
-    // NOVA FUNÇÃO para limpar o texto gigante que vem do Google Sheets
+    // CORREÇÃO MANTIDA E MELHORADA: Extrai a hora mesmo se for de 1 dígito (ex: 8:00)
     function formatarDuracao(duracaoStr) {
         if (!duracaoStr) return '00:00';
         
         const texto = duracaoStr.toString().trim();
         
-        // Se já for uma hora curta "08:15" ou "08:15:00"
+        // Se já for uma hora curta "08:15", "8:15" ou "08:15:00"
         if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(texto)) {
             return texto;
         }
         
         // Pega só o padrão de hora no meio da string (ex: "Sat Dec 30 1899 08:00:00 GMT...")
-        const match = texto.match(/\b(\d{2}:\d{2}(?::\d{2})?)\b/);
+        const match = texto.match(/\b(\d{1,2}:\d{2}(?::\d{2})?)\b/);
         if (match) {
-            return match[1]; // Vai retornar "08:00:00"
+            return match[1]; // Vai retornar "08:00:00" ou "8:00"
         }
         
         return texto;
+    }
+
+    // MELHORIA DE SEGURANÇA: Impede erros se a data vier com a hora grudada ("T00:00:00.000Z")
+    function formatarData(dataISO) {
+        if(!dataISO) return "";
+        const apenasData = dataISO.split('T')[0]; // Isola apenas a parte YYYY-MM-DD
+        const [ano, mes, dia] = apenasData.split('-');
+        return `${dia}/${mes}`;
     }
 
     function renderizarCards() {
@@ -367,7 +375,6 @@
             card.className = `card ${statusClass}`;
             card.onclick = () => abrirModalEdicao(item);
 
-            // AQUI ESTÁ A CORREÇÃO: formatarDuracao(item.duracao)
             card.innerHTML = `
                 <div class="card-header">
                     <div class="card-title">${item.descricao}</div>
@@ -542,12 +549,6 @@
         const t = document.getElementById('toast');
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    function formatarData(dataISO) {
-        if(!dataISO) return "";
-        const [ano, mes, dia] = dataISO.split('-');
-        return `${dia}/${mes}`;
     }
 
     const txtDescricao = document.getElementById('descricao');
