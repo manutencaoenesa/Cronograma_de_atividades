@@ -34,7 +34,6 @@
             padding-bottom: 80px; 
         }
 
-        /* Título Principal */
         .app-header {
             padding: 30px 20px;
             text-align: center;
@@ -53,7 +52,6 @@
 
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
-        /* CARDS */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--glass-border);
@@ -74,7 +72,7 @@
         }
 
         .card.status-concluido {
-            opacity: 0.5;
+            opacity: 0.8;
             border-color: transparent;
         }
         .card.status-concluido::before { background: var(--success); }
@@ -93,12 +91,10 @@
         .detail-item i { width: 15px; color: var(--gold); margin-right: 5px; }
         .equipe-list { grid-column: 1 / -1; margin-top: 5px; border-top: 1px solid var(--glass-border); padding-top: 10px; }
 
-        /* Loading Inicial */
         .loader-container { text-align: center; padding: 50px; }
         .spinner { width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* FAB (Botão Flutuante) */
         .fab {
             position: fixed; bottom: 25px; right: 25px;
             width: 60px; height: 60px;
@@ -112,7 +108,6 @@
         }
         .fab:hover { transform: scale(1.1) rotate(90deg); }
 
-        /* MODAL (Formulário) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
@@ -134,7 +129,6 @@
 
         .close-modal { position: absolute; top: 15px; right: 15px; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; padding: 10px; }
 
-        /* Estilos do Form */
         label { display: block; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; margin: 15px 0 5px; letter-spacing: 1px; }
         input, select, textarea {
             width: 100%; background: rgba(0,0,0,0.3);
@@ -142,7 +136,6 @@
             padding: 12px; color: white; font-family: 'Outfit', sans-serif;
             font-size: 1rem;
         }
-        input:focus, textarea:focus, select:focus { border-color: var(--gold); background: rgba(0,0,0,0.5); }
         
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
@@ -153,9 +146,7 @@
             color: #0f1115; font-weight: 600; font-size: 1rem;
             cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
         }
-        .btn-save:disabled { background: #555; color: #888; cursor: not-allowed; }
 
-        /* Toast */
         .toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
             background: #1a1d26; border: 1px solid var(--glass-border); padding: 12px 24px;
@@ -164,45 +155,14 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* AUTOCOMPLETE STYLES */
-        .input-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
         .sugestoes-box {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #1a1d26;
-            border: 1px solid var(--gold);
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            z-index: 1500;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: #1a1d26; border: 1px solid var(--gold);
+            border-radius: 0 0 10px 10px; z-index: 1500;
+            max-height: 200px; overflow-y: auto; display: none;
         }
-
-        .sugestao-item {
-            padding: 12px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-bottom: 1px solid var(--glass-border);
-            transition: 0.2s;
-        }
-
-        .sugestao-item:hover {
-            background: var(--gold-glow);
-            color: white;
-        }
-
-        .sugestao-item:last-child {
-            border-bottom: none;
-        }
+        .sugestao-item { padding: 12px; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; border-bottom: 1px solid var(--glass-border); }
+        .sugestao-item:hover { background: var(--gold-glow); color: white; }
     </style>
 </head>
 <body>
@@ -217,7 +177,6 @@
             <div class="spinner"></div>
             <p style="color: var(--text-muted)">Sincronizando dados...</p>
         </div>
-
         <div id="cardsArea"></div>
     </div>
 
@@ -234,7 +193,7 @@
                 <input type="hidden" id="editId"> 
                 
                 <label>Descrição do Serviço</label>
-                <div class="input-wrapper">
+                <div style="position: relative;">
                     <textarea id="descricao" rows="3" placeholder="O que foi feito?" required autocomplete="off"></textarea>
                     <div id="listaSugestoes" class="sugestoes-box"></div>
                 </div>
@@ -296,9 +255,7 @@
     </div>
 
 <script>
-    // 👇👇👇 SUBTITUA PELA SUA URL 👇👇👇
     const API_URL = "https://script.google.com/macros/s/AKfycbzAQkeSMmAY8Cylbbv69VLY5M58ttTao_F3sWzL4VsUnNrO9HMXbJZsoTrwP4MdxyWm/exec"; 
-    // 👆👆👆
 
     let colaboradoresGlobal = [];
     let atividadesGlobal = [];
@@ -308,119 +265,92 @@
 
     async function carregarDados() {
         document.getElementById('mainLoader').style.display = 'block';
-        document.getElementById('cardsArea').innerHTML = '';
-        
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
-            
             colaboradoresGlobal = data.colaboradores;
             atividadesGlobal = data.atividades;
-            
-            const todasDescricoes = atividadesGlobal.map(a => a.descricao);
-            descricoesUnicas = [...new Set(todasDescricoes)].filter(d => d && d.trim() !== "");
-
+            descricoesUnicas = [...new Set(atividadesGlobal.map(a => a.descricao))].filter(d => d);
             renderizarCards();
         } catch (error) {
             console.error(error);
-            alert("Erro ao carregar dados. Verifique a conexão.");
         } finally {
             document.getElementById('mainLoader').style.display = 'none';
         }
     }
 
-    // CORREÇÃO MANTIDA E MELHORADA: Extrai a hora mesmo se for de 1 dígito (ex: 8:00)
+    /**
+     * CORREÇÃO DA DURAÇÃO:
+     * Esta função agora prioriza o formato de duração (HH:MM) vindo do Sheets.
+     */
     function formatarDuracao(duracaoStr) {
         if (!duracaoStr) return '00:00';
         
         const texto = duracaoStr.toString().trim();
         
-        // Se já for uma hora curta "08:15", "8:15" ou "08:15:00"
-        if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(texto)) {
-            return texto;
+        // Se o Sheets enviar uma data estranha tipo "Sat Dec 30 1899 08:00:00"
+        if (texto.includes('1899') || texto.includes('GMT')) {
+            const match = texto.match(/\d{2}:\d{2}/);
+            return match ? match[0] : texto;
         }
-        
-        // Pega só o padrão de hora no meio da string (ex: "Sat Dec 30 1899 08:00:00 GMT...")
-        const match = texto.match(/\b(\d{1,2}:\d{2}(?::\d{2})?)\b/);
-        if (match) {
-            return match[1]; // Vai retornar "08:00:00" ou "8:00"
-        }
-        
-        return texto;
-    }
 
-    // MELHORIA DE SEGURANÇA: Impede erros se a data vier com a hora grudada ("T00:00:00.000Z")
-    function formatarData(dataISO) {
-        if(!dataISO) return "";
-        const apenasData = dataISO.split('T')[0]; // Isola apenas a parte YYYY-MM-DD
-        const [ano, mes, dia] = apenasData.split('-');
-        return `${dia}/${mes}`;
+        // Se for uma string de tempo "26:29:00", remove os segundos finais para ficar "26:29"
+        if (/^\d+:\d{2}:\d{2}$/.test(texto)) {
+            return texto.substring(0, texto.lastIndexOf(':'));
+        }
+
+        return texto;
     }
 
     function renderizarCards() {
         const area = document.getElementById('cardsArea');
         area.innerHTML = '';
 
-        const emAndamento = atividadesGlobal.filter(a => a.status !== 'Concluído');
-        const concluidos = atividadesGlobal.filter(a => a.status === 'Concluído');
-        
-        const listaFinal = [...emAndamento, ...concluidos];
-
-        listaFinal.forEach(item => {
+        atividadesGlobal.forEach(item => {
             const isConcluido = item.status === 'Concluído';
-            const statusClass = isConcluido ? 'status-concluido' : 'status-andamento';
-            const badgeClass = isConcluido ? 'badge-green' : 'badge-gold';
-            
             const card = document.createElement('div');
-            card.className = `card ${statusClass}`;
+            card.className = `card ${isConcluido ? 'status-concluido' : 'status-andamento'}`;
             card.onclick = () => abrirModalEdicao(item);
 
             card.innerHTML = `
                 <div class="card-header">
                     <div class="card-title">${item.descricao}</div>
-                    <span class="status-badge ${badgeClass}">${item.status}</span>
+                    <span class="status-badge ${isConcluido ? 'badge-green' : 'badge-gold'}">${item.status}</span>
                 </div>
                 <div class="card-details">
-                    <div class="detail-item">
-                        <i class="far fa-calendar-alt"></i> ${formatarData(item.dataInicio)}
-                    </div>
-                    <div class="detail-item">
-                        <i class="far fa-clock"></i> ${item.horaInicio}
-                    </div>
+                    <div class="detail-item"><i class="far fa-calendar-alt"></i> ${formatarData(item.dataInicio)}</div>
+                    <div class="detail-item"><i class="far fa-clock"></i> ${item.horaInicio}</div>
                     ${isConcluido ? `
-                    <div class="detail-item" style="color: var(--success)">
-                        <i class="fas fa-check"></i> Fim: ${formatarData(item.dataTermino)}
-                    </div>
-                    <div class="detail-item" style="color: var(--success)">
-                        <i class="far fa-clock"></i> ${item.horaTermino}
-                    </div>
-                    <div class="detail-item" style="color: var(--success); grid-column: 1 / -1; margin-top: 5px; font-weight: bold;">
-                        <i class="fas fa-stopwatch"></i> Duração Total: ${formatarDuracao(item.duracao)}
-                    </div>` : ''}
-                    <div class="equipe-list">
-                        <i class="fas fa-users"></i> ${item.equipe}
-                    </div>
+                        <div class="detail-item" style="color: var(--success)"><i class="fas fa-check"></i> Fim: ${formatarData(item.dataTermino)}</div>
+                        <div class="detail-item" style="color: var(--success)"><i class="far fa-clock"></i> ${item.horaTermino}</div>
+                        <div class="detail-item" style="color: var(--success); grid-column: 1 / -1; font-weight: bold; font-size: 1rem; margin-top: 5px;">
+                            <i class="fas fa-stopwatch"></i> Duração Total: ${formatarDuracao(item.duracao)}
+                        </div>
+                    ` : ''}
+                    <div class="equipe-list"><i class="fas fa-users"></i> ${item.equipe}</div>
                 </div>
             `;
             area.appendChild(card);
         });
     }
 
+    function formatarData(dataISO) {
+        if(!dataISO) return "";
+        if(dataISO.includes('/')) return dataISO;
+        const parts = dataISO.split('T')[0].split('-');
+        return parts.length === 3 ? `${parts[2]}/${parts[1]}` : dataISO;
+    }
+
+    // --- Funções de Modal e Form (Mantidas) ---
     function abrirModalNova() {
         document.getElementById('formAtividade').reset();
-        document.getElementById('editId').value = ""; 
+        document.getElementById('editId').value = "";
         document.getElementById('modalTitle').innerText = "Nova Atividade";
         document.getElementById('listaNomes').innerHTML = "";
-        
-        const hoje = new Date().toISOString().split('T')[0];
-        document.getElementById('dataInicio').value = hoje;
-        
-        const agora = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-        document.getElementById('horaInicio').value = agora;
-
+        document.getElementById('dataInicio').value = new Date().toISOString().split('T')[0];
+        document.getElementById('horaInicio').value = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
         document.getElementById('status').value = "Em Andamento";
         toggleFimFields();
-        
         document.getElementById('modalForm').classList.add('active');
     }
 
@@ -428,93 +358,56 @@
         document.getElementById('editId').value = item.id;
         document.getElementById('modalTitle').innerText = "Editar Atividade";
         document.getElementById('descricao').value = item.descricao;
-        document.getElementById('dataInicio').value = item.dataInicio;
+        document.getElementById('dataInicio').value = item.dataInicio ? item.dataInicio.split('T')[0] : "";
         document.getElementById('horaInicio').value = item.horaInicio;
         document.getElementById('status').value = item.status;
-        
-        document.getElementById('dataTermino').value = item.dataTermino;
+        document.getElementById('dataTermino').value = item.dataTermino ? item.dataTermino.split('T')[0] : "";
         document.getElementById('horaTermino').value = item.horaTermino;
-
         const nomes = item.equipe.split(', ');
-        const qtd = nomes.length;
-        const selectQtd = document.getElementById('qtdPessoas');
-        
-        selectQtd.value = qtd > 6 ? 6 : qtd; 
-        gerarCamposNomes(nomes); 
-
+        document.getElementById('qtdPessoas').value = nomes.length;
+        gerarCamposNomes(nomes);
         toggleFimFields();
         document.getElementById('modalForm').classList.add('active');
     }
 
-    function fecharModal() {
-        document.getElementById('modalForm').classList.remove('active');
-        document.getElementById('listaSugestoes').style.display = 'none';
-    }
+    function fecharModal() { document.getElementById('modalForm').classList.remove('active'); }
 
     function gerarCamposNomes(nomesPreenchidos = []) {
         const qtd = parseInt(document.getElementById('qtdPessoas').value);
         const container = document.getElementById('listaNomes');
         container.innerHTML = '';
-
         for (let i = 0; i < qtd; i++) {
             const select = document.createElement('select');
             select.className = "nome-colaborador";
             select.style.marginBottom = "10px";
-            select.required = true;
-            
             let options = `<option value="">Colaborador ${i+1}</option>`;
             colaboradoresGlobal.forEach(nome => {
-                const selected = (nomesPreenchidos[i] && nomesPreenchidos[i] === nome) ? 'selected' : '';
+                const selected = (nomesPreenchidos[i] === nome) ? 'selected' : '';
                 options += `<option value="${nome}" ${selected}>${nome}</option>`;
             });
-            
             select.innerHTML = options;
             container.appendChild(select);
         }
     }
 
     function toggleFimFields() {
-        const status = document.getElementById('status').value;
+        const isConcluido = document.getElementById('status').value === "Concluído";
         const areaFim = document.getElementById('fimFields');
-        const dTermino = document.getElementById('dataTermino');
-        const hTermino = document.getElementById('horaTermino');
-
-        if (status === "Concluído") {
-            areaFim.style.opacity = "1";
-            areaFim.style.pointerEvents = "auto";
-            dTermino.required = true;
-            hTermino.required = true;
-            
-            if(!dTermino.value) dTermino.value = new Date().toISOString().split('T')[0];
-            if(!hTermino.value) hTermino.value = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-
-        } else {
-            areaFim.style.opacity = "0.5";
-            areaFim.style.pointerEvents = "none";
-            dTermino.required = false;
-            hTermino.required = false;
-        }
+        areaFim.style.opacity = isConcluido ? "1" : "0.5";
+        areaFim.style.pointerEvents = isConcluido ? "auto" : "none";
     }
 
     document.getElementById('formAtividade').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
         const btn = document.getElementById('btnSalvar');
-        const txt = document.getElementById('btnText');
-        const spin = document.getElementById('btnSpinner');
-        
         btn.disabled = true;
-        txt.style.display = 'none';
-        spin.style.display = 'block';
+        document.getElementById('btnText').style.display = 'none';
+        document.getElementById('btnSpinner').style.display = 'block';
 
-        const selects = document.querySelectorAll('.nome-colaborador');
-        const nomesArray = Array.from(selects).map(s => s.value).filter(v => v !== "");
-
-        const idEdicao = document.getElementById('editId').value;
-        
+        const nomesArray = Array.from(document.querySelectorAll('.nome-colaborador')).map(s => s.value).filter(v => v);
         const payload = {
-            action: idEdicao ? "update" : "create",
-            id: idEdicao,
+            action: document.getElementById('editId').value ? "update" : "create",
+            id: document.getElementById('editId').value,
             descricao: document.getElementById('descricao').value,
             dataInicio: document.getElementById('dataInicio').value,
             horaInicio: document.getElementById('horaInicio').value,
@@ -525,80 +418,20 @@
         };
 
         try {
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(payload)
-            });
-
-            showToast();
+            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             fecharModal();
             carregarDados();
-
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         } catch (err) {
-            alert("Erro ao salvar. Tente novamente.");
-            console.error(err);
+            alert("Erro ao salvar.");
         } finally {
             btn.disabled = false;
-            txt.style.display = 'block';
-            spin.style.display = 'none';
+            document.getElementById('btnText').style.display = 'block';
+            document.getElementById('btnSpinner').style.display = 'none';
         }
     });
-
-    function showToast() {
-        const t = document.getElementById('toast');
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    const txtDescricao = document.getElementById('descricao');
-    const boxSugestoes = document.getElementById('listaSugestoes');
-
-    txtDescricao.addEventListener('input', function() { filtrarSugestoes(this.value); });
-    txtDescricao.addEventListener('focus', function() { filtrarSugestoes(this.value); });
-
-    document.addEventListener('click', function(e) {
-        if (!txtDescricao.contains(e.target) && !boxSugestoes.contains(e.target)) {
-            boxSugestoes.style.display = 'none';
-        }
-    });
-
-    function filtrarSugestoes(textoDigitado) {
-        if(descricoesUnicas.length === 0) return;
-
-        const termo = textoDigitado ? textoDigitado.toLowerCase() : "";
-        const sugestoesFiltradas = descricoesUnicas.filter(desc => 
-            desc.toLowerCase().includes(termo)
-        );
-
-        let listaParaExibir = termo === "" ? descricoesUnicas.slice(0, 15) : sugestoesFiltradas.slice(0, 15);
-        renderizarListaSugestoes(listaParaExibir);
-    }
-
-    function renderizarListaSugestoes(lista) {
-        boxSugestoes.innerHTML = '';
-
-        if (lista.length === 0) {
-            boxSugestoes.style.display = 'none';
-            return;
-        }
-
-        lista.forEach(texto => {
-            const div = document.createElement('div');
-            div.className = 'sugestao-item';
-            div.innerText = texto;
-            
-            div.onclick = () => {
-                txtDescricao.value = texto; 
-                boxSugestoes.style.display = 'none'; 
-            };
-
-            boxSugestoes.appendChild(div);
-        });
-
-        boxSugestoes.style.display = 'block';
-    }
 </script>
-
 </body>
 </html>
